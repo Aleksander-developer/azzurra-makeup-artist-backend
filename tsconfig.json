@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",
-    "lib": ["es2020", "esnext", "dom"], // MODIFICA QUESTA RIGA
+    "lib": ["es2020", "esnext", "dom"],
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -10,7 +10,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": ".", // AGGIUNGI QUESTA RIGA
+    "paths": { // AGGIUNGI QUESTE RIGHE
+      "*": ["node_modules/*", "src/types/*"]
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
