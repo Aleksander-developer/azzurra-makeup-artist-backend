@@ -1,17 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2020", // O "es2016" se preferisci mantenere la stessa versione del tuo progetto funzionante
+    "target": "es2016",
     "module": "commonjs",
-    "lib": ["es2020"], // Mantieni solo es2020, senza "dom"
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node" // Mantieni questa riga, è utile
+    "rootDir": "./src",
+    "outDir": "./dist"
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"] // Mantieni "dist" qui
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
