@@ -1,17 +1,18 @@
-// tsconfig.json
 {
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",
-    "lib": ["es2020", "dom"],
+    "lib": ["es2020"], // Rimosso "dom" - non necessario per il backend
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    // Aggiungi queste due righe per garantire che i tipi di Node.js e delle librerie siano riconosciuti
+    "types": ["node", "express", "cors", "multer", "nodemailer"] // Elenca esplicitamente i tipi che usi
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"] // Aggiungi "dist" per escludere la cartella di output dalla compilazione
 }
