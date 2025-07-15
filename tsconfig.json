@@ -11,7 +11,8 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     // Aggiungi queste due righe per garantire che i tipi di Node.js e delle librerie siano riconosciuti
-    "types": ["node", "express", "cors", "multer", "nodemailer"] // Elenca esplicitamente i tipi che usi
+    "types": ["node", "express", "cors", "multer", "nodemailer"], // Elenca esplicitamente i tipi che usi
+    "moduleResolution": "node"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"] // Aggiungi "dist" per escludere la cartella di output dalla compilazione
