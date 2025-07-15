@@ -104,7 +104,7 @@ export const addPortfolioItem = async (req: Request, res: Response) => {
         fs.unlinkSync(file.path); // Elimina il file temporaneo
 
         // Trova i dettagli corrispondenti dal frontend
-        const imageDetails = imagesData[i] || {};
+        const imageDetails: IPortfolioImage = imagesData[i] || { src: '', description: '', alt: '' };
         galleryImages.push({
           src: result.secure_url,
           description: imageDetails.description || '',
