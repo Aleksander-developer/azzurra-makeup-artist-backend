@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "es2020", // O "es2016" se preferisci mantenere la stessa versione del tuo progetto funzionante
     "module": "commonjs",
-    "lib": ["es2020"], // Rimosso "dom" - non necessario per il backend
+    "lib": ["es2020"], // Mantieni solo es2020, senza "dom"
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -10,10 +10,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    // Aggiungi queste due righe per garantire che i tipi di Node.js e delle librerie siano riconosciuti
-    "types": ["node", "express", "cors", "multer", "nodemailer"], // Elenca esplicitamente i tipi che usi
-    "moduleResolution": "node"
+    "moduleResolution": "node" // Mantieni questa riga, è utile
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist"] // Aggiungi "dist" per escludere la cartella di output dalla compilazione
+  "exclude": ["node_modules", "dist"] // Mantieni "dist" qui
 }
