@@ -2,23 +2,19 @@
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",
-    "lib": ["es2020", "esnext", "dom"], // Mantieni questa configurazione lib
+    "lib": ["es2020", "dom"],
     "outDir": "./dist",
     "rootDir": "./src",
-    "strict": false, // CAMBIA QUESTO a false (o rimuovilo)
+    "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true, // Mantieni questo a true
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*", "src/types/*"]
-    },
-    // Aggiungi o modifica queste righe per essere meno stringente
-    "noImplicitAny": false, // Permette l'uso di 'any' senza errori
-    "strictFunctionTypes": false, // Rilassa il controllo sui tipi di funzione
-    "allowJs": true // Permette a TypeScript di processare anche file JavaScript
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
