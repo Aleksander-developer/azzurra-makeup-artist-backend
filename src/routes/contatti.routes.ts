@@ -1,4 +1,4 @@
-// api/src/routes/contatti.routes.ts
+// src/routes/contatti.routes.ts
 import express from 'express';
 import { inviaMessaggio } from '../controllers/contatti.controller';
 

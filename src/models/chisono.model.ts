@@ -1,4 +1,4 @@
-// api/src/models/chisono.model.ts
+// src/models/chisono.model.ts
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IChiSono extends Document {

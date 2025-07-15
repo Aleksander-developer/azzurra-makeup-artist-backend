@@ -1,4 +1,4 @@
-// api/src/models/progetto.model.ts (Ora PortfolioItem)
+// src/models/progetto.model.ts (Ora PortfolioItem)
 import mongoose, { Document, Schema } from 'mongoose';
 
 // Interfaccia per le immagini della galleria

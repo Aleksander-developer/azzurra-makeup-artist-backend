@@ -1,4 +1,4 @@
-// api/src/models/servizio.model.ts
+// src/models/servizio.model.ts
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IServizio extends Document {

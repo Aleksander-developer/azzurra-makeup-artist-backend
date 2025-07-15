@@ -1,4 +1,4 @@
-// api/src/controllers/servizi.controller.ts
+// src/controllers/servizi.controller.ts
 import { Request, Response } from 'express';
 import { Servizio } from '../models/servizio.model'; // Percorso corretto
 

@@ -1,4 +1,4 @@
-// api/src/routes/servizi.routes.ts
+// src/routes/servizi.routes.ts
 import express from 'express';
 import { getServizi } from '../controllers/servizi.controller';
 

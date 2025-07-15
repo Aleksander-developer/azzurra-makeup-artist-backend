@@ -1,4 +1,4 @@
-// api/src/routes/index.ts
+// src/routes/index.ts
 import express from 'express';
 import chiSonoRoutes from './chi-sono.routes';
 import contattiRoutes from './contatti.routes';

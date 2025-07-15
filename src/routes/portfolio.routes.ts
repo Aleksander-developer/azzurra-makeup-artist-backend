@@ -1,4 +1,4 @@
-// api/src/routes/portfolio.routes.ts
+// src/routes/portfolio.routes.ts
 import express from 'express';
 import multer from 'multer';
 import path from 'path';

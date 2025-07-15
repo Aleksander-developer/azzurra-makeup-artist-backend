@@ -1,4 +1,4 @@
-// api/src/utils/email.ts
+// src/utils/email.ts
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 

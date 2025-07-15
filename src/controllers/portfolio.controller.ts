@@ -1,4 +1,4 @@
-// api/src/controllers/portfolio.controller.ts
+// src/controllers/portfolio.controller.ts
 import { Request, Response } from 'express';
 import { PortfolioItem, IPortfolioImage } from '../models/progetto.model'; // Importa il modello aggiornato
 import cloudinary from '../config/cloudinary.config'; // Importa Cloudinary

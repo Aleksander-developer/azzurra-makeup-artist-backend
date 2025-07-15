@@ -1,4 +1,4 @@
-// api/src/models/contatto.model.ts
+// src/models/contatto.model.ts
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IContatto extends Document {
