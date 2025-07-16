@@ -2,34 +2,15 @@
 import { Request, Response } from 'express';
 import { PortfolioItem, IPortfolioImage } from '../models/progetto.model';
 import cloudinary from '../config/cloudinary.config';
-import fs from 'fs';
-import path from 'path';
+// import fs from 'fs'; // Non più necessario se usi memoryStorage
+// import path from 'path'; // Non più necessario se usi memoryStorage
 
 // Funzione helper per eliminare i file temporanei di Multer
+// NON PIÙ NECESSARIA, PUOI RIMUOVERLA COMPLETAMENTE
 const cleanupMulterFiles = (files?: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[]) => {
-  if (files) {
-    if (Array.isArray(files)) {
-      files.forEach(file => {
-        if (file && file.path) {
-          fs.unlink(file.path, (err) => {
-            if (err) console.error(`Errore nell'eliminazione del file temporaneo ${file.path}:`, err);
-          });
-        }
-      });
-    } else {
-      for (const key in files) {
-        if (Object.prototype.hasOwnProperty.call(files, key)) {
-          files[key].forEach(file => {
-            if (file && file.path) {
-              fs.unlink(file.path, (err) => {
-                if (err) console.error(`Errore nell'eliminazione del file temporaneo ${file.path}:`, err);
-              });
-            }
-          });
-        }
-      }
-    }
-  }
+  // Questa funzione non è più necessaria con multer.memoryStorage()
+  // dato che i file non vengono scritti su disco.
+  // Puoi rimuovere questa funzione e tutte le sue chiamate.
 };
 
 
@@ -65,45 +46,49 @@ export const addPortfolioItem = async (req: Request, res: Response) => {
     const mainImageFile = (req.files as { [fieldname: string]: Express.Multer.File[] })?.mainImage?.[0];
     const galleryFiles = (req.files as { [fieldname: string]: Express.Multer.File[] })?.galleryImages;
 
-    // --- CORREZIONE QUI: Parsa imagesData UNA SOLA VOLTA ---
-    // Il frontend invia req.body.images come una stringa JSON dell'intero array.
-    // Dobbiamo parsare questa stringa una sola volta per ottenere l'array di oggetti.
     const imagesData: IPortfolioImage[] = req.body.images ? JSON.parse(req.body.images) : [];
-    // --- FINE CORREZIONE ---
 
     if (!title || !category) {
-      cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] });
+      // cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] }); // Rimuovi questa chiamata
       return res.status(400).json({ message: 'Titolo e Categoria sono obbligatori.' });
     }
     if (!mainImageFile) {
-      cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] });
+      // cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] }); // Rimuovi questa chiamata
       return res.status(400).json({ message: 'Immagine principale è obbligatoria.' });
     }
 
     let mainImageUrl = '';
 
-    // Upload immagine principale
-    const resultMain = await cloudinary.uploader.upload(mainImageFile.path, {
-      folder: 'azzurra-makeup/portfolio-main',
-      quality: "auto:low",
-      fetch_format: "auto"
-    });
+    // --- CORREZIONE QUI: Carica da buffer, non da path ---
+    const resultMain = await cloudinary.uploader.upload(
+      `data:${mainImageFile.mimetype};base64,${mainImageFile.buffer.toString('base64')}`, // <-- USA .buffer
+      {
+        folder: 'azzurra-makeup/portfolio-main',
+        quality: "auto:low",
+        fetch_format: "auto"
+      }
+    );
     mainImageUrl = resultMain.secure_url;
-    fs.unlinkSync(mainImageFile.path); // Elimina il file temporaneo
+    // fs.unlinkSync(mainImageFile.path); // Rimuovi questa riga
+    // --- FINE CORREZIONE ---
 
     // Upload immagini della galleria
     const galleryImages: IPortfolioImage[] = [];
     if (galleryFiles && galleryFiles.length > 0) {
       for (let i = 0; i < galleryFiles.length; i++) {
         const file = galleryFiles[i];
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: 'azzurra-makeup/portfolio-gallery',
-          quality: "auto:low",
-          fetch_format: "auto"
-        });
-        fs.unlinkSync(file.path); // Elimina il file temporaneo
+        // --- CORREZIONE QUI: Carica da buffer, non da path ---
+        const result = await cloudinary.uploader.upload(
+          `data:${file.mimetype};base64,${file.buffer.toString('base64')}`, // <-- USA .buffer
+          {
+            folder: 'azzurra-makeup/portfolio-gallery',
+            quality: "auto:low",
+            fetch_format: "auto"
+          }
+        );
+        // fs.unlinkSync(file.path); // Rimuovi questa riga
+        // --- FINE CORREZIONE ---
 
-        // Trova i dettagli corrispondenti dal frontend
         const imageDetails: IPortfolioImage = imagesData[i] || { src: '', description: '', alt: '' };
         galleryImages.push({
           src: result.secure_url,
@@ -126,7 +111,7 @@ export const addPortfolioItem = async (req: Request, res: Response) => {
     res.status(201).json(savedItem);
   } catch (error) {
     console.error('Errore nell\'aggiunta dell\'elemento del portfolio:', error);
-    cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] });
+    // cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] }); // Rimuovi questa chiamata
     res.status(500).json({ message: 'Errore nell\'aggiunta dell\'elemento del portfolio', error: (error as Error).message });
   }
 };
@@ -139,17 +124,14 @@ export const updatePortfolioItem = async (req: Request, res: Response) => {
     const mainImageFile = (req.files as { [fieldname: string]: Express.Multer.File[] })?.mainImage?.[0];
     const galleryFiles = (req.files as { [fieldname: string]: Express.Multer.File[] })?.galleryImages;
 
-    // --- CORREZIONE QUI: Parsa imagesData UNA SOLA VOLTA ---
     const imagesData: IPortfolioImage[] = req.body.images ? JSON.parse(req.body.images) : [];
-    // --- FINE CORREZIONE ---
 
     const item = await PortfolioItem.findById(id);
     if (!item) {
-      cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] });
+      // cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] }); // Rimuovi questa chiamata
       return res.status(404).json({ message: 'Elemento del portfolio non trovato' });
     }
 
-    // Aggiorna i campi testuali
     item.title = title || item.title;
     item.subtitle = subtitle !== undefined ? subtitle : item.subtitle;
     item.description = description !== undefined ? description : item.description;
@@ -157,13 +139,18 @@ export const updatePortfolioItem = async (req: Request, res: Response) => {
 
     // Gestione immagine principale
     if (mainImageFile) {
-      const result = await cloudinary.uploader.upload(mainImageFile.path, {
-        folder: 'azzurra-makeup/portfolio-main',
-        quality: "auto:low",
-        fetch_format: "auto"
-      });
+      // --- CORREZIONE QUI: Carica da buffer, non da path ---
+      const result = await cloudinary.uploader.upload(
+        `data:${mainImageFile.mimetype};base64,${mainImageFile.buffer.toString('base64')}`, // <-- USA .buffer
+        {
+          folder: 'azzurra-makeup/portfolio-main',
+          quality: "auto:low",
+          fetch_format: "auto"
+        }
+      );
       item.mainImage = result.secure_url;
-      fs.unlinkSync(mainImageFile.path);
+      // fs.unlinkSync(mainImageFile.path); // Rimuovi questa riga
+      // --- FINE CORREZIONE ---
     } else if (req.body.mainImage === '') {
         item.mainImage = '';
     }
@@ -175,12 +162,17 @@ export const updatePortfolioItem = async (req: Request, res: Response) => {
     for (const imgData of imagesData) {
         if (imgData.isNew && galleryFiles && galleryFileIndex < galleryFiles.length) {
             const file = galleryFiles[galleryFileIndex];
-            const result = await cloudinary.uploader.upload(file.path, {
+            // --- CORREZIONE QUI: Carica da buffer, non da path ---
+            const result = await cloudinary.uploader.upload(
+              `data:${file.mimetype};base64,${file.buffer.toString('base64')}`, // <-- USA .buffer
+              {
                 folder: 'azzurra-makeup/portfolio-gallery',
                 quality: "auto:low",
                 fetch_format: "auto"
-            });
-            fs.unlinkSync(file.path);
+              }
+            );
+            // fs.unlinkSync(file.path); // Rimuovi questa riga
+            // --- FINE CORREZIONE ---
             finalGalleryImages.push({
                 src: result.secure_url,
                 description: imgData.description || '',
@@ -202,7 +194,7 @@ export const updatePortfolioItem = async (req: Request, res: Response) => {
     res.json(updatedItem);
   } catch (error) {
     console.error('Errore nell\'aggiornamento dell\'elemento del portfolio:', error);
-    cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] });
+    // cleanupMulterFiles(req.files as { [fieldname: string]: Express.Multer.File[] }); // Rimuovi questa chiamata
     res.status(500).json({ message: 'Errore nell\'aggiornamento dell\'elemento del portfolio', error: (error as Error).message });
   }
 };

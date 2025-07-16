@@ -1,7 +1,7 @@
 // src/routes/portfolio.routes.ts
 import express from 'express';
 import multer from 'multer';
-import path from 'path';
+// import path from 'path'; // Non più necessario se non usi path per disk storage
 import {
   getPortfolioItems,
   getPortfolioItemById,
@@ -12,15 +12,9 @@ import {
 
 const router = express.Router();
 
-// Configurazione Multer per l'upload su disco temporaneo
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // La cartella 'uploads' deve esistere nella root del backend
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
+// --- CORREZIONE QUI: Usa multer.memoryStorage() ---
+// Configurazione Multer per mantenere i file in memoria
+const storage = multer.memoryStorage(); // <--- CAMBIATO DA diskStorage A memoryStorage
 const upload = multer({ storage: storage });
 
 // Rotte per il Portfolio
@@ -28,8 +22,6 @@ router.get('/', getPortfolioItems);
 router.get('/:id', getPortfolioItemById);
 
 // Per add e update, usiamo `upload.fields` per gestire più campi file
-// 'mainImage' è il campo per l'immagine principale (singola)
-// 'galleryImages' è il campo per le immagini della galleria (array di file, con un limite di 10)
 router.post(
   '/',
   upload.fields([
@@ -51,4 +43,3 @@ router.put(
 router.delete('/:id', deletePortfolioItem);
 
 export default router;
-
