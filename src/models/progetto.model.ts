@@ -1,4 +1,4 @@
-// src/models/progetto.model.ts (Ora PortfolioItem)
+// src/models/progetto.model.ts (nel tuo backend)
 import mongoose, { Document, Schema } from 'mongoose';
 
 // Interfaccia per le immagini della galleria
@@ -6,7 +6,7 @@ export interface IPortfolioImage {
   src: string;
   description?: string;
   alt?: string;
-  isNew?: boolean; // <-- AGGIUNTO: Indica se l'immagine è stata appena caricata
+  isNew?: boolean; // <-- AGGIUNTO DI NUOVO: Questo è il fix per l'errore 'isNew'
 }
 
 // Interfaccia per l'elemento del portfolio
@@ -19,13 +19,14 @@ export interface IPortfolioItem extends Document {
   images?: IPortfolioImage[]; // Array di immagini della galleria
   createdAt: Date;
   updatedAt: Date;
+  id?: string; // Aggiungi id qui per TypeScript, sarà un virtuale
 }
 
 const PortfolioImageSchema: Schema = new Schema({
   src: { type: String, required: true },
   description: { type: String },
   alt: { type: String }
-}, { _id: false }); // _id: false per evitare che MongoDB crei un _id per ogni sub-documento
+}, { _id: false });
 
 const PortfolioItemSchema: Schema = new Schema({
   title: { type: String, required: true },
@@ -33,10 +34,29 @@ const PortfolioItemSchema: Schema = new Schema({
   description: { type: String },
   mainImage: { type: String, required: true },
   category: { type: String, required: true },
-  images: [PortfolioImageSchema] // Array di sub-documenti PortfolioImage
+  images: [PortfolioImageSchema]
 }, {
-  timestamps: true // Aggiunge automaticamente createdAt e updatedAt
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      // FIX QUI: Cast 'ret' a 'any' per permettere l'assegnazione e la cancellazione di proprietà
+      const transformedRet: any = ret;
+      transformedRet.id = transformedRet._id;
+      delete transformedRet._id;
+      delete transformedRet.__v;
+    }
+  },
+  toObject: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      // FIX QUI: Cast 'ret' a 'any'
+      const transformedRet: any = ret;
+      transformedRet.id = transformedRet._id;
+      delete transformedRet._id;
+      delete transformedRet.__v;
+    }
+  }
 });
 
 export const PortfolioItem = mongoose.model<IPortfolioItem>('PortfolioItem', PortfolioItemSchema);
-
