@@ -2,12 +2,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { connectDB } from './config/db.config';
+// import { connectDB } from './config/db.config'; // Non importare qui se gestito in index.ts
 import apiRoutes from './routes';
 import path from 'path';
 
 // **IMPORTANTE:** Importa il tuo file di configurazione Cloudinary qui
-import './config/cloudinary.config'; // <-- Aggiungi questa riga
+import './config/cloudinary.config'; // <-- Questa riga va bene
 
 dotenv.config();
 
@@ -16,7 +16,7 @@ const app = express();
 const allowedOrigins = [
   'https://azzurra-makeup-artist.netlify.app',
   'http://localhost:4200', // Per lo sviluppo locale di Angular
-  'http://localhost:3000' // Per il backend stesso se fai richieste interne
+  'http://localhost:3000' // Per il backend stesso se fai richieste interne (utile per test)
 ];
 
 app.use(cors({
@@ -43,7 +43,8 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/api', apiRoutes);
 
-(async () => { await connectDB(); })();
+// **MODIFICATO:** Rimuovi o commenta questa riga, la connessione DB è ora in index.ts
+// (async () => { await connectDB(); })();
 
 // Rotta di base per testare che il server sia attivo
 app.get('/', (req, res) => {
