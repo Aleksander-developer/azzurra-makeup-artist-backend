@@ -1,12 +1,12 @@
-// src/models/progetto.model.ts (nel tuo backend)
+// src/models/progetto.model.ts
 import mongoose, { Document, Schema } from 'mongoose';
 
 // Interfaccia per le immagini della galleria
 export interface IPortfolioImage {
-  src: string;
-  description?: string;
-  alt?: string;
-  isNew?: boolean; // <-- AGGIUNTO DI NUOVO: Questo è il fix per l'errore 'isNew'
+  src?: string;
+  description?: string; // Reso opzionale
+  alt?: string; // Reso opzionale
+  isNew?: boolean; // Questo campo è solo per il frontend, non sarà salvato nel DB
 }
 
 // Interfaccia per l'elemento del portfolio
@@ -14,33 +14,30 @@ export interface IPortfolioItem extends Document {
   title: string;
   subtitle?: string;
   description?: string;
-  mainImage: string; // URL dell'immagine principale
   category: string;
-  images?: IPortfolioImage[]; // Array di immagini della galleria
+  images: IPortfolioImage[];
   createdAt: Date;
   updatedAt: Date;
-  id?: string; // Aggiungi id qui per TypeScript, sarà un virtuale
+  id?: string;
 }
 
 const PortfolioImageSchema: Schema = new Schema({
-  src: { type: String, required: true },
-  description: { type: String },
-  alt: { type: String }
+  src: { type: String, required: false },
+  description: { type: String, required: false }, // Reso non richiesto
+  alt: { type: String, required: false } // Reso non richiesto
 }, { _id: false });
 
 const PortfolioItemSchema: Schema = new Schema({
   title: { type: String, required: true },
   subtitle: { type: String },
   description: { type: String },
-  mainImage: { type: String, required: true },
   category: { type: String, required: true },
-  images: [PortfolioImageSchema]
+  images: { type: [PortfolioImageSchema], default: [] }
 }, {
   timestamps: true,
   toJSON: {
     virtuals: true,
     transform: (doc, ret) => {
-      // FIX QUI: Cast 'ret' a 'any' per permettere l'assegnazione e la cancellazione di proprietà
       const transformedRet: any = ret;
       transformedRet.id = transformedRet._id;
       delete transformedRet._id;
@@ -50,7 +47,6 @@ const PortfolioItemSchema: Schema = new Schema({
   toObject: {
     virtuals: true,
     transform: (doc, ret) => {
-      // FIX QUI: Cast 'ret' a 'any'
       const transformedRet: any = ret;
       transformedRet.id = transformedRet._id;
       delete transformedRet._id;

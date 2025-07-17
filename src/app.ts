@@ -6,6 +6,9 @@ import { connectDB } from './config/db.config';
 import apiRoutes from './routes';
 import path from 'path';
 
+// **IMPORTANTE:** Importa il tuo file di configurazione Cloudinary qui
+import './config/cloudinary.config'; // <-- Aggiungi questa riga
+
 dotenv.config();
 
 const app = express();
@@ -34,6 +37,8 @@ app.use(express.json()); // Per il parsing di application/json
 app.use(express.urlencoded({ extended: true })); // Per il parsing di application/x-www-form-urlencoded
 
 // Serve i file statici dalla cartella 'uploads' (usata da Multer)
+// NOTA: Se usi multer.memoryStorage(), questa riga potrebbe non essere strettamente necessaria
+// a meno che tu non abbia altri upload su disco.
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/api', apiRoutes);
@@ -46,4 +51,3 @@ app.get('/', (req, res) => {
 });
 
 export default app;
-
